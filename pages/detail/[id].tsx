@@ -3,7 +3,7 @@ import Head from 'next/head'
 import { GetStaticProps, GetStaticPaths, GetServerSideProps } from 'next'
 
 export default function Detail({ post }: any) {
-    console.log(post)
+    // console.log(post)
     return (
         <div>
             <Head>

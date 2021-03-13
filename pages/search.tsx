@@ -1,25 +1,10 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import styles from '../styles/search.module.css'
-import { Button, Modal, Form, Input, Image, message } from 'antd'
+import { Button, Modal, Form, Input, Image, message, Typography } from 'antd'
+import { useRouter } from 'next/router'
 
-const UrlList = [
-    {
-        title: '百度',
-        url: 'https://baidu.com',
-        imgUrl: 'https://baidu.com/favicon.ico'
-    },
-    {
-        title: '百度',
-        url: 'https://baidu.com',
-        imgUrl: 'https://baidu.com/favicon.ico'
-    },
-    {
-        title: '百度',
-        url: 'https://baidu.com',
-        imgUrl: 'https://baidu.com/favicon.ico'
-    }
-]
+const { Text, Title } = Typography
 
 let StorageUrlList = []
 if (process.browser) {
@@ -28,15 +13,16 @@ if (process.browser) {
 }
 
 export default function Search() {
+    const router = useRouter()
     const [urlList, setUrlList] = useState<any[]>(StorageUrlList)
-    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isModalVisible, setIsModalVisible] = useState(false)
     const showModal = () => {
         setIsModalVisible(true);
     }
 
     const layout = {
-        labelCol: { span: 4 },
-        wrapperCol: { span: 20 },
+        labelCol: { span: 24 },
+        wrapperCol: { span: 24 },
     }
 
     const tailLayout = {
@@ -85,19 +71,53 @@ export default function Search() {
     
     return (
         <div className={styles.container}>
-            <h1>search</h1>
-            <input />
+            <Image
+                src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"
+                width={300}
+                preview={false}
+                style={{
+                    marginBottom: 30,
+                }}
+             />
+            <Input.Search
+                size="large"
+                placeholder="请输入内容"
+                onSearch={(value: string) => {
+                    // console.log(value)
+                    router.push('/posts')
+                }}
+                style={{
+                    marginBottom: 10,
+                }}
+             />
             <div className={styles.urlList}>
-                {urlList.map((item: any, index: number) => <div key={index} className={styles.urlListItem}><Link href={item.url}><Image
-                    src={item.imgUrl}
-                    alt={item.title}
-                    title={item.title}
-                    className={styles.urlImg}
-                    preview={false}
-                /></Link></div>)}
+                {urlList.map((item: any, index: number) => <div key={index} className={styles.urlListItem}>
+                    <div className={styles.imgBox}>
+                        <Link href={item.url}>
+                            <Image
+                                src={item.imgUrl}
+                                // alt={item.title}
+                                // title={item.title}
+                                className={styles.urlImg}
+                                preview={false}
+                                fallback="/imgs/nopic.png"
+                            />
+                        </Link>
+                    </div>
+                    <Text ellipsis style={{ width: 100, fontSize: 12, textAlign: 'center' }}>{item.title}</Text>
+                </div>)}
+                <div className={styles.urlListItem} onClick={showModal}>
+                    <div className={styles.imgBox}>+</div>
+                    <Text ellipsis style={{ width: 100, fontSize: 12, textAlign: 'center' }}>添加快捷方式</Text>
+                </div>
             </div>
-            <Button onClick={showModal}>+add</Button>
-            <Modal title="添加快捷方式" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} footer={false}>
+            <Modal 
+                title="添加快捷方式" 
+                visible={isModalVisible} 
+                onOk={handleOk} 
+                onCancel={handleCancel}
+                width={400}
+                footer={false}>
             <Form
                 {...layout}
                 name="basic"
@@ -106,7 +126,7 @@ export default function Search() {
                 onFinishFailed={onFinishFailed}
                 >
                 <Form.Item
-                    label="网址名"
+                    label="名称"
                     name="title"
                     rules={[{ required: true, message: '请输入网址名' }]}
                 >
@@ -114,7 +134,7 @@ export default function Search() {
                 </Form.Item>
 
                 <Form.Item
-                    label="网址URL"
+                    label="网址"
                     name="url"
                     rules={[{ required: true, message: '请输入url' }]}
                 >
